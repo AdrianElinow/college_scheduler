@@ -81,19 +81,81 @@ def get_data(filename):
 
     return node_map
 
+
+
 def show_graph(graph):
-    ''' debug function '''
+    ''' Debug function '''
 
     for k, v in graph.items():
         print(v.show())
 
 
-def scheduler(graph, taken=[]):
+def is_satisfied( prereqs, taken ):
+    ''' Determines if course prerequisites have been satisfied
+            
+            helper function for get_options()
+    '''
 
-    ''' Primary program loop '''
+    for i in prereqs:
 
-    pass
-    
+        # course has been taken?
+        if (i in taken):
+            continue 
+        elif i == "*":
+            if len(taken) >= prereqs.count("*"):
+                continue
+        return False
+
+    return True
+
+
+def get_options(graph, taken):
+    ''' Finds next available courses 
+
+            helper function for scheduler()
+    '''
+
+    options = []
+
+    for k,v in graph.items():
+
+        # disregard taken courses
+        if v.title in taken:
+            continue
+
+        # Make sure course prerequisites are satisfied
+
+        if is_satisfied(v.prereqs, taken): 
+            options.append(v.title)
+
+
+    return options
+
+
+def scheduler(graph):
+
+    options = []
+    taken = []
+
+    # first options are courses with no prerequisites
+    options = [ v.title for k,v in graph.items() if not v.prereqs]
+
+
+    while options:
+
+        chosen = []
+        
+        # just takes first 5 options
+        chosen = options[:5]
+
+        print("Chosen classes: {0}".format(chosen))
+
+        for c in chosen:
+            options.remove(c)
+            taken.append(c)
+
+        options = get_options(graph, taken)
+
 
 def main():
     ''' main function '''
@@ -101,6 +163,8 @@ def main():
     graph = get_data(sys.argv[1])
 
     show_graph(graph)
+
+    print('\nentering loop:\n')
 
     scheduler(graph)
 
