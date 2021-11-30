@@ -133,14 +133,16 @@ def get_options(graph, taken):
 
 def user_select(options):
 
+    # get user selection
+    print("\nselect up to 5")
+    print("(Enter the number before the course id)")
+    print("(e.x. : \"> 0 1 2 ...\" )")
+
     # show options
     for i in range(len(options)):
-        print(i, options[i])
+        print("\t({0}) {1}".format(i, options[i]))
 
-    # get user selection
-    print("select up to 5")
-
-    selection = [ options[int(x)] for x in input("> ").strip().split(" ")[:5] if (0 <= int(x) < len(options)) ]
+    selection = list(set([ options[int(x)] for x in input("> ").strip().split(" ")[:5] if (0 <= int(x) < len(options)) ]))
 
     return selection
 
