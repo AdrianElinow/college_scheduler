@@ -92,6 +92,7 @@ def show_graph(graph):
 
 def is_satisfied( prereqs, taken ):
     ''' Determines if course prerequisites have been satisfied
+            basically just checks if 'prereqs' is a subset of 'taken'
             
             helper function for get_options()
     '''
@@ -101,7 +102,7 @@ def is_satisfied( prereqs, taken ):
         # course has been taken?
         if (i in taken):
             continue 
-        elif i == "*":
+        elif i == "*": # special case for csc301
             if len(taken) >= prereqs.count("*"):
                 continue
         return False
@@ -124,10 +125,8 @@ def get_options(graph, taken):
             continue
 
         # Make sure course prerequisites are satisfied
-
         if is_satisfied(v.prereqs, taken): 
             options.append(v.title)
-
 
     return options
 
@@ -148,12 +147,13 @@ def user_select(options):
 
 def scheduler(graph, auto_control=True):
 
+    semester = 0
+
     options = []
     taken = []
 
     # first options are courses with no prerequisites
     options = [ v.title for k,v in graph.items() if not v.prereqs]
-
 
     while options:
 
@@ -163,13 +163,18 @@ def scheduler(graph, auto_control=True):
         else:
             chosen = user_select(options)
 
-        print("Chosen classes: {0}".format(chosen))
+        print("Classes for Semester ({0}): {1}".format(semester, chosen))
 
         for c in chosen:
             options.remove(c)
             taken.append(c)
 
+        semester += 1
+
         options = get_options(graph, taken)
+
+
+    print("It took you",semester,"semesters to finish every class.")
 
 
 def main():
@@ -177,9 +182,8 @@ def main():
     
     graph = get_data(sys.argv[1])
 
-    show_graph(graph)
-
-    print("\n")
+    """show_graph(graph)
+                print("\n")"""
 
     control = input("Enter 'y' to use auto-scheduler or [enter] for manual control\n\t(y?)> ")
     if "y" in control.strip().lower():
