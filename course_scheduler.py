@@ -132,7 +132,21 @@ def get_options(graph, taken):
     return options
 
 
-def scheduler(graph):
+def user_select(options):
+
+    # show options
+    for i in range(len(options)):
+        print(i, options[i])
+
+    # get user selection
+    print("select up to 5")
+
+    selection = [ options[int(x)] for x in input("> ").strip().split(" ")[:5] if (0 <= int(x) < len(options)) ]
+
+    return selection
+
+
+def scheduler(graph, auto_control=True):
 
     options = []
     taken = []
@@ -144,9 +158,10 @@ def scheduler(graph):
     while options:
 
         chosen = []
-        
-        # just takes first 5 options
-        chosen = options[:5]
+        if auto_control:
+            chosen = options[:5]
+        else:
+            chosen = user_select(options)
 
         print("Chosen classes: {0}".format(chosen))
 
@@ -164,9 +179,13 @@ def main():
 
     show_graph(graph)
 
-    print('\nentering loop:\n')
+    print("\n")
 
-    scheduler(graph)
+    control = input("Enter 'y' to use auto-scheduler or [enter] for manual control\n\t(y?)> ")
+    if "y" in control.strip().lower():
+        scheduler(graph, auto_control=True)
+    else:
+        scheduler(graph, auto_control=False)
 
 # Do not touch
 if __name__ == '__main__':
