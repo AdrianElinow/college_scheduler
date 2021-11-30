@@ -1,0 +1,30 @@
+mat151 : ; csc220 csc241 csc317
+mat161 : ; csc220 csc241 csc317
+csc141 : ; csc142
+csc142 : csc141 ; csc240 csc231
+csc220 : mat151 mat161 ; csc345 csc331 csc416 csc490
+csc231 : csc142 ; csc331 csc472 csc471 csc466 csc468 csc471 csc472
+csc240 : csc142 ; csc404 csc400 csc335 csc331 csc317 csc241
+csc241 : csc240 mat151 mat161 ; csc499 csc497 csc495 csc490 csc481 csc476 csc417 csc416 csc404 csc402 csc400 csc345 csc335 csc331
+csc301 : * * * ; csc302
+csc302 : csc301 csc335 ;
+csc317 : csc240 mat151 mat161 ;
+csc331 : csc220 csc240 csc241 ;
+csc335 : csc240 csc241 ; csc336
+csc336 : csc335 ;
+csc345 : csc220 csc241 ;
+csc400 : csc240 csc241 ;
+csc402 : csc241 ;
+csc404 : csc240 csc241 ;
+csc416 : csc220 csc240 csc241 ;
+csc417 : csc241 ;
+csc466 : csc231 ;
+csc471 : csc231 ;
+csc472 : csc231 ;
+csc476 : csc241 ;
+csc481 : csc241 ;
+csc490 : csc220 csc241 ;
+csc495 : csc241 ;
+csc496 : csc241 ;
+csc497 : csc241 ;
+csc499 : csc241 ;
