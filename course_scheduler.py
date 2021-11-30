@@ -61,7 +61,23 @@ def get_data(filename):
     # class lookup
     node_map = {}
 
-    ###
+    with open(filename, "r") as src:
+        lines = src.readlines()
+
+        for line in lines:
+
+            entry = line.strip().split(" ")
+            
+            # find separators
+            pre   = entry.index(":")+1
+            sub   = entry.index(";")+1
+
+            # read from end-of-line
+            subseqs = entry[sub:]
+            entry = entry[:sub]
+
+            # add new Course object to node map
+            node_map[entry[0]] = Course(entry[0], entry[pre:sub-1], subseqs)
 
     return node_map
 
