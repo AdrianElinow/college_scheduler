@@ -131,10 +131,10 @@ def get_options(graph, taken):
     return options
 
 
-def user_select(options):
+def user_select(options, max_classes):
 
     # get user selection
-    print("\nselect up to 5")
+    print("\nselect up to",max_classes)
     print("(Enter the number before the course id)")
     print("(e.x. : \"> 0 1 2 ...\" )")
 
@@ -142,12 +142,12 @@ def user_select(options):
     for i in range(len(options)):
         print("\t({0}) {1}".format(i, options[i]))
 
-    selection = list(set([ options[int(x)] for x in input("> ").strip().split(" ")[:5] if (0 <= int(x) < len(options)) ]))
+    selection = list(set([ options[int(x)] for x in input("> ").strip().split(" ")[:max_classes] if (0 <= int(x) < len(options)) ]))
 
     return selection
 
 
-def scheduler(graph, auto_control=True):
+def scheduler(graph, max_classes, auto_control=True):
 
     semester = 0
 
@@ -161,14 +161,13 @@ def scheduler(graph, auto_control=True):
 
         chosen = []
         if auto_control:
-            chosen = options[:5]
+            chosen = options[:max_classes] # does this throw an error?
         else:
-            chosen = user_select(options)
+            chosen = user_select(options, max_classes)
 
         print("Classes for Semester ({0}): {1}".format(semester, chosen))
 
         for c in chosen:
-            options.remove(c)
             taken.append(c)
 
         semester += 1
@@ -187,11 +186,13 @@ def main():
     """show_graph(graph)
                 print("\n")"""
 
+    max_classes = int(input("max classes per semester?\n\t> "))
+
     control = input("Enter 'y' to use auto-scheduler or [enter] for manual control\n\t(y?)> ")
     if "y" in control.strip().lower():
-        scheduler(graph, auto_control=True)
+        scheduler(graph, max_classes, auto_control=True)
     else:
-        scheduler(graph, auto_control=False)
+        scheduler(graph, max_classes, auto_control=False)
 
 # Do not touch
 if __name__ == '__main__':
