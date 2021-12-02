@@ -24,6 +24,7 @@ class Course:
         return self.title
 
 
+
 def get_data(filename):
     
     ''' Source file intake function
@@ -93,6 +94,7 @@ def show_graph(graph):
         print(v.show())
 
 
+
 def is_satisfied( prereqs, taken ):
     ''' Determines if course prerequisites have been satisfied
             basically just checks if 'prereqs' is a subset of 'taken'
@@ -111,6 +113,7 @@ def is_satisfied( prereqs, taken ):
         return False
 
     return True
+
 
 
 def get_options(graph, taken):
@@ -134,12 +137,48 @@ def get_options(graph, taken):
     return options
 
 
+
+def read_ints_robust(prompt):
+
+    ''' robust input function 
+            reads integer values (separated by spaces) from keyboard
+
+            if non-integer-convertible value found:
+                catch error then restart awaiting keyboard input
+
+    '''
+
+    vals = []
+
+    print(prompt)
+    
+    while not vals:
+
+        try:
+            line = input(">>> ").strip()
+
+            if "quit" in line:
+                exit(1)
+
+            vals = [ int(x) for x in line.split(" ") ]
+
+        except KeyboardInterrupt:
+            exit(1)
+
+        except Exception as e:
+            print(e)
+            print("Bad Input")
+            vals = []
+            continue
+
+    return vals
+
+
+
 def user_select(options, max_classes):
 
-    ''' User input is NOT ROBUST (will crash when handling misinput) '''
-
     # get user selection
-    print("\nselect up to",max_classes)
+    print("\nselect up to",max_classes,"or 'quit' to exit the program")
     print("(Enter the number before the course id)")
     print("(e.x. : \"> 0 1 2 ...\" )")
 
@@ -147,26 +186,34 @@ def user_select(options, max_classes):
     for i in range(len(options)):
         print("\t({0}) {1}".format(i, options[i]))
 
-    selection = list(set([ options[int(x)] for x in input("> ").strip().split(" ")[:max_classes] if (0 <= int(x) < len(options)) ]))
+    # READ VALUES ROBUST
+    # get selection from options list
+    selection = [ options[x] for x in read_ints_robust("") ]
 
     return selection
 
 
 def scheduler(graph, max_classes, auto_control=True):
 
+    ''' Primary program loop '''
+
     semester = 1
 
+    # course options (nodes in queue)
     options = []
+    # courses taken (nodes visited)
     taken = []
 
     # first options are courses with no prerequisites
     options = [ v.title for k,v in graph.items() if not v.prereqs]
 
+
     while options:
 
         chosen = []
+
         if auto_control:
-            chosen = options[:max_classes] # does this throw an error?
+            chosen = options[:max_classes] # should not throw an error
         else:
             chosen = user_select(options, max_classes)
 
@@ -180,26 +227,44 @@ def scheduler(graph, max_classes, auto_control=True):
         options = get_options(graph, taken)
 
 
-    print("It took you",(semester-1),"semesters to finish every class.")
+    # Determine if certain nodes are unreachable
+    unreachables = [ x for x in graph.values() if not (x.title in taken) ]
+    if unreachables:
+        print("Unreachable nodes detected:")
+        for course in unreachables:
+            print('\t',course.title)
+
+    # fun end comment
+    print("It took you",(semester-1),"semesters to complete the graph.")
 
 
 def main():
     ''' main function '''
 
-    print("This program does not handle misinputs in its current state. Be careful that input follows the correct format (indicated each time)")
-    
-    graph = get_data(sys.argv[1])
-
+    # Read source file
+    try:
+        graph = get_data(sys.argv[1])
+    except Exception as e:
+        print(e)
+        print("Could not read specified file.")
+        exit(1)
 
     ''' user input is NOT ROBUST (will crash when handling misinput) '''
 
-    max_classes = int(input("\nmax classes per semester? (integer)\n\t> "))
+    # READ ROBUST
+    # use only first integer value
+    max_classes = read_ints_robust("max classes per semester?")[0]
+
 
     control = input("Enter 'y' to use auto-scheduler or [enter] for manual control\n\t(y?)> ")
     if "y" in control.strip().lower():
+        print("[auto on]")
         scheduler(graph, max_classes, auto_control=True)
     else:
+        print("[auto off]")
         scheduler(graph, max_classes, auto_control=False)
+
+
 
 # Do not touch
 if __name__ == '__main__':
