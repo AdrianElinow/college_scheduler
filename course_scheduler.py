@@ -27,6 +27,9 @@ class Course:
 def get_data(filename):
     
     ''' Source file intake function
+
+        WARNING
+        Source file intake is NOT ROBUST (will crash when handling misinput)
         
         line-by-line format:
 
@@ -133,6 +136,8 @@ def get_options(graph, taken):
 
 def user_select(options, max_classes):
 
+    ''' User input is NOT ROBUST (will crash when handling misinput) '''
+
     # get user selection
     print("\nselect up to",max_classes)
     print("(Enter the number before the course id)")
@@ -149,7 +154,7 @@ def user_select(options, max_classes):
 
 def scheduler(graph, max_classes, auto_control=True):
 
-    semester = 0
+    semester = 1
 
     options = []
     taken = []
@@ -175,18 +180,20 @@ def scheduler(graph, max_classes, auto_control=True):
         options = get_options(graph, taken)
 
 
-    print("It took you",semester,"semesters to finish every class.")
+    print("It took you",(semester-1),"semesters to finish every class.")
 
 
 def main():
     ''' main function '''
+
+    print("This program does not handle misinputs in its current state. Be careful that input follows the correct format (indicated each time)")
     
     graph = get_data(sys.argv[1])
 
-    """show_graph(graph)
-                print("\n")"""
 
-    max_classes = int(input("max classes per semester?\n\t> "))
+    ''' user input is NOT ROBUST (will crash when handling misinput) '''
+
+    max_classes = int(input("\nmax classes per semester? (integer)\n\t> "))
 
     control = input("Enter 'y' to use auto-scheduler or [enter] for manual control\n\t(y?)> ")
     if "y" in control.strip().lower():
