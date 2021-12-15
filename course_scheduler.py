@@ -241,6 +241,11 @@ def scheduler(graph, max_classes, auto_control=True):
 def main():
     ''' main function '''
 
+    if len(sys.argv) != 2:
+        print("To run program:\n\t$ python3 course_scheduler.py <course-map file>")
+        exit(1)
+
+
     # Read source file
     try:
         graph = get_data(sys.argv[1])
